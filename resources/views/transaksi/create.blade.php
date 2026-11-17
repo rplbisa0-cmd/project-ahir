@@ -1,0 +1,14 @@
+@extends('layouts.app')
+@section('title', 'Transaksi Baru | Resto & Coffee Shop')
+@section('content')
+<div class="page-head"><div class="eyebrow mb-2">Kasir</div><h1 class="page-title h2 mb-2">Buat pesanan baru</h1><p class="lead-copy mb-0">Pilih menu dan masukkan jumlah pesanan pelanggan.</p></div>
+@if ($menus->isEmpty())
+<div class="card p-4 p-md-5 text-center"><div class="empty-icon">🧾</div><h2 class="h5 page-title">Menu masih kosong</h2><p class="text-secondary mb-3">Tambahkan makanan atau minuman terlebih dahulu sebelum membuat transaksi.</p><a href="{{ route('menu.create') }}" class="btn btn-primary align-self-center">＋ Tambah Menu</a></div>
+@else
+<form action="{{ route('transaksi.store') }}" method="POST">@csrf
+<div class="row g-4"><div class="col-lg-8"><div class="card p-3 p-md-4 h-100"><div class="d-flex align-items-center justify-content-between mb-3"><div><div class="section-label">Langkah 1</div><h2 class="h5 page-title mt-1 mb-0">Pilih menu</h2></div><span class="badge-category">{{ $menus->count() }} pilihan</span></div>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Menu</th><th>Harga</th><th style="width:125px">Jumlah</th></tr></thead><tbody>@foreach ($menus as $menu)<tr><td><div class="d-flex align-items-center gap-3"><div class="stat-icon">{{ $menu->kategori === 'Minuman' ? '☕' : '🍽️' }}</div><div><div class="fw-bold">{{ $menu->nama }}</div><span class="small text-secondary">{{ $menu->kategori }}</span></div></div></td><td class="price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</td><td><input type="number" name="jumlah[{{ $menu->id }}]" min="0" step="1" class="form-control" value="{{ old('jumlah.'.$menu->id, 0) }}" aria-label="Jumlah {{ $menu->nama }}"></td></tr>@endforeach</tbody></table></div><div class="form-text mt-3">Tips: isi jumlah 0 untuk menu yang tidak dipesan.</div></div></div>
+<div class="col-lg-4"><div class="card card-soft p-4"><div class="section-label mb-2">Langkah 2</div><h2 class="h5 page-title mb-3">Pembayaran</h2><div class="menu-visual mb-4" style="height:100px;font-size:2.7rem">💳</div><label for="pembayaran" class="form-label">Uang dari pelanggan (Rp)</label><input id="pembayaran" name="pembayaran" type="number" min="0" step="1" class="form-control mb-2" value="{{ old('pembayaran') }}" required placeholder="Contoh: 50000"><div class="form-text mb-4">Total belanja dan kembalian akan dihitung serta disimpan saat transaksi diproses.</div><button class="btn btn-primary btn-lg w-100" type="submit">Simpan Transaksi　→</button><a href="{{ route('menu.index') }}" class="btn btn-light w-100 mt-2">Lihat Data Menu</a></div></div></div>
+</form>
+@endif
+@endsection
